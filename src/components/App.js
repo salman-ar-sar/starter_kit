@@ -1,12 +1,15 @@
 import React, { Component } from 'react';
-import logo from '../logo.png';
 import './App.css';
+
+const ipfsClient = require('ipfs-http-client')
+const ipfs = ipfsClient({ host: 'ipfs.infura.io', port: 5001, protocol: 'https' })
 
 class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      buffer: null
+      buffer: null,
+      memeHash: 'QmRjg6pi6sbsNfqdVXDsBvStfXPsnwYBAFwsTcXVDadAe4'
     };
   }
 
@@ -22,9 +25,20 @@ class App extends Component {
     }
   }
 
+  // Sample hash: "QmRjg6pi6sbsNfqdVXDsBvStfXPsnwYBAFwsTcXVDadAe4"
+  // Sample URL: https://ipfs.infura.io/ipfs/QmRjg6pi6sbsNfqdVXDsBvStfXPsnwYBAFwsTcXVDadAe4
   onSubmit = (event) => {
     event.preventDefault();
-    
+    console.log("Inside")
+    ipfs.add(this.state.buffer, (error, result) => {
+      console.log("IPFS result", result);
+      if (error) {
+        console.error(error)
+        return
+      }
+      this.setState({ memeHash: result[0].hash })
+      console.log(this.state.memeHash)
+    })
   }
 
   render() {
@@ -49,7 +63,7 @@ class App extends Component {
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  <img src={logo} className="App-logo" alt="logo" />
+                  <img src={ 'https://ipfs.infura.io/ipfs/' + this.state.memeHash } className="App-logo" alt="logo" width="400" />
                 </a>
                 <p>&nbsp;</p>
                 <h1>Meme of the Day</h1>
