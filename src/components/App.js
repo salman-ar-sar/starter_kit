@@ -3,11 +3,28 @@ import logo from '../logo.png';
 import './App.css';
 
 class App extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      buffer: null
+    };
+  }
+
   captureFile = (event) => {
     event.preventDefault();
-    console.log(event.target.files);
+    // console.log(event.target.files);
     // Process file for IPFS
+    const file = event.target.files[0];
+    const reader = new window.FileReader();
+    reader.readAsArrayBuffer(file)
+    reader.onloadend = () => {
+      this.setState({ buffer: Buffer(reader.result) })
+    }
+  }
 
+  onSubmit = (event) => {
+    event.preventDefault();
+    
   }
 
   render() {
@@ -38,7 +55,7 @@ class App extends Component {
                 <h1>Meme of the Day</h1>
                 <p>&nbsp;</p>
                 <h3>Change Meme</h3>
-                <form>
+                <form onSubmit={this.onSubmit} >
                   <input type='file' onChange={this.captureFile} />
                   <input type='submit' />
                 </form>
